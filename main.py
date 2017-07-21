@@ -16,17 +16,14 @@ def message_received(client, server, message):
                                                "data": {"battleId": message["requestId"], "gameStarted": True}}))
 
         time.sleep(5)
-        response = dict()
+        response = {
+            "battleId": message["battleId"],
+            "replayId": 123456,
+            "playerResults": [{"playerFafId": message["participants"][0], "result":"victory"}] +
+                [{"playerFafId": id, "result": "death", "killedBy": message["participants"][0]}
+                    for id in message["participants"][1:]]
+        }
         # response["requestId"] = message["requestId"]
-        response["battleId"] = message["battleId"]
-        response["replayId"] = 123456
-        playerResults = []
-
-        playerResults.append({"playerFafId": 1, "result":"victory"})
-        #playerResults.append({"playerFafId": 2, "result":"recall"})
-        playerResults.append({"playerFafId": 3, "result":"death", "killedBy": 1})
-        #playerResults.append({"playerFafId": 4, "result":"recall"})
-        response["playerResults"] = playerResults
 
         response_json = json.dumps({"action": "gameResult", "data": response})
 
